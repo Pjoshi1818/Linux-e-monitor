@@ -1,5 +1,6 @@
 import psutil
 import os
+from datetime import datetime
 
 from rich.console import Console
 from rich.table import Table
@@ -92,6 +93,7 @@ def process_table():
 
     console.print(table)
 
+
 def search_process():
 
     keyword = input(
@@ -138,6 +140,34 @@ def search_process():
             "[red]No matching process found[/red]"
         )
 
+
+def export_logs():
+
+    cpu, memory, disk = system_stats()
+
+    timestamp = datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+
+    log_entry = (
+        f"{timestamp} | "
+        f"CPU: {cpu}% | "
+        f"Memory: {memory}% | "
+        f"Disk: {disk}%\n"
+    )
+
+    with open(
+        "system_log.txt",
+        "a",
+        encoding="utf-8"
+    ) as file:
+        file.write(log_entry)
+
+    console.print(
+        "[green]System stats exported to system_log.txt[/green]"
+    )
+
+
 while True:
 
     clear_screen()
@@ -158,10 +188,11 @@ while True:
     process_table()
 
     console.print(
-        "\n[bold cyan][K][/bold cyan] Kill Process    "
-        "[bold green][S][/bold green] Search Process    "
-        "[bold red][Q][/bold red] Quit    "
-        "[bold yellow][Enter][/bold yellow] Refresh"
+        "\n[bold cyan][K][/bold cyan] Kill Process"
+        "    [bold green][S][/bold green] Search Process"
+        "    [bold yellow][L][/bold yellow] Export Logs"
+        "    [bold red][Q][/bold red] Quit"
+        "    [Enter] Refresh"
     )
 
     choice = input("Choose: ").lower()
@@ -175,11 +206,19 @@ while True:
 
         try:
             os.kill(int(pid), 9)
-            console.print("[green]Process killed successfully[/green]")
+            console.print(
+                "[green]Process killed successfully[/green]"
+            )
 
         except Exception as e:
-            console.print(f"[red]{e}[/red]")
+            console.print(
+                f"[red]{e}[/red]"
+            )
 
+        input("Press Enter...")
+
+    elif choice == "l":
+        export_logs()
         input("Press Enter...")
 
     elif choice == "q":
