@@ -92,6 +92,51 @@ def process_table():
 
     console.print(table)
 
+def search_process():
+
+    keyword = input(
+        "Enter process name to search: "
+    ).lower()
+
+    table = Table(
+        title=f"Search Results: {keyword}",
+        header_style="bold green",
+        expand=True
+    )
+
+    table.add_column("PID")
+    table.add_column("Process Name")
+    table.add_column("CPU %")
+
+    found = False
+
+    for proc in psutil.process_iter(
+        ["pid", "name", "cpu_percent"]
+    ):
+
+        try:
+            name = proc.info["name"]
+
+            if name and keyword in name.lower():
+
+                table.add_row(
+                    str(proc.info["pid"]),
+                    name,
+                    str(proc.info["cpu_percent"])
+                )
+
+                found = True
+
+        except:
+            continue
+
+    if found:
+        console.print(table)
+
+    else:
+        console.print(
+            "[red]No matching process found[/red]"
+        )
 
 while True:
 
@@ -114,14 +159,16 @@ while True:
 
     console.print(
         "\n[bold cyan][K][/bold cyan] Kill Process    "
+        "[bold green][S][/bold green] Search Process    "
         "[bold red][Q][/bold red] Quit    "
         "[bold yellow][Enter][/bold yellow] Refresh"
     )
 
     choice = input("Choose: ").lower()
 
-    if choice == "q":
-        break
+    if choice == "s":
+        search_process()
+        input("Press Enter...")
 
     elif choice == "k":
         pid = input("Enter PID: ")
@@ -134,3 +181,6 @@ while True:
             console.print(f"[red]{e}[/red]")
 
         input("Press Enter...")
+
+    elif choice == "q":
+        break
