@@ -6,6 +6,10 @@ This project is inspired by Linux tools like `top` and `htop`, but built from sc
 
 ---
 
+## Preview
+
+![System Monitor Screenshot](screenshot.png)
+
 ## Features
 
 - Real-time CPU usage monitoring
